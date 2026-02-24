@@ -398,8 +398,8 @@
         let timerInterval = null;
         let currentSentence = '';
         let scores = JSON.parse(localStorage.getItem('typingScores')) || [];
-        let totalWordsTyped = 0;
-        let correctWords = 0;
+        let completedSentences = 0;
+        let totalWordsCompleted = 0;
 
         const elements = {
             timer: document.getElementById('timer'),
@@ -433,8 +433,8 @@
         function startGame() {
             gameActive = true;
             timeLeft = 60;
-            totalWordsTyped = 0;
-            correctWords = 0;
+            completedSentences = 0;
+            totalWordsCompleted = 0;
             elements.startBtn.disabled = true;
             elements.input.disabled = false;
             elements.input.focus();
@@ -483,14 +483,14 @@
             elements.input.disabled = true;
             elements.startBtn.disabled = false;
 
-            const wpm = Math.round(totalWordsTyped / (60 / 60));
+            const wpm = totalWordsCompleted;
             scores.unshift(wpm);
             localStorage.setItem('typingScores', JSON.stringify(scores));
             displayScores();
 
-            const accuracy = totalWordsTyped > 0 ? Math.round((correctWords / totalWordsTyped) * 100) : 0;
+            const accuracy = completedSentences > 0 ? Math.round((completedSentences / Math.max(1, completedSentences)) * 100) : 0;
             elements.finalScore.textContent = wpm;
-            elements.finalAccuracy.textContent = accuracy + '%';
+            elements.finalAccuracy.textContent = 'Sentences: ' + completedSentences;
             elements.gameOverBox.classList.add('show');
         }
 
@@ -500,20 +500,14 @@
             const userWords = this.value.trim().split(/\s+/).filter(w => w.length > 0);
             const sentenceWords = currentSentence.split(/\s+/);
 
-            totalWordsTyped = userWords.length;
-            correctWords = 0;
-
-            for (let i = 0; i < userWords.length && i < sentenceWords.length; i++) {
-                if (userWords[i].toLowerCase() === sentenceWords[i].toLowerCase()) {
-                    correctWords++;
-                }
-            }
-
             updateStats();
 
             if (userWords.length > 0 && userWords.length === sentenceWords.length) {
                 if (userWords.join(' ').toLowerCase() === sentenceWords.join(' ').toLowerCase()) {
                     elements.input.className = 'correct';
+                    completedSentences++;
+                    totalWordsCompleted += sentenceWords.length;
+                    
                     setTimeout(() => {
                         elements.input.value = '';
                         elements.input.className = '';
@@ -529,10 +523,9 @@
         });
 
         function updateStats() {
-            elements.wordCount.textContent = totalWordsTyped;
-            elements.correctCount.textContent = correctWords;
-            const accuracy = totalWordsTyped > 0 ? Math.round((correctWords / totalWordsTyped) * 100) : 0;
-            elements.accuracy.textContent = accuracy + '%';
+            elements.wordCount.textContent = totalWordsCompleted;
+            elements.correctCount.textContent = completedSentences;
+            elements.accuracy.textContent = completedSentences > 0 ? completedSentences + ' Done' : '0 Done';
         }
 
         function resetScores() {
