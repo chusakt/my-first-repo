@@ -1,307 +1,549 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scientific Calculator</title>
+    <title>Typing Speed Game</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
         }
-        .calculator {
+
+        .container {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .score-panel {
             background: white;
-            padding: 2rem;
             border-radius: 15px;
+            padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 500px;
+            width: 250px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
         }
-        h1 {
-            text-align: center;
+
+        .score-panel h2 {
             color: #333;
-            margin-top: 0;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
         }
-        .display {
-            background: #222;
-            color: #00ff00;
-            font-size: 2rem;
-            padding: 1.5rem;
-            border-radius: 8px;
-            text-align: right;
-            margin-bottom: 1rem;
-            word-wrap: break-word;
-            word-break: break-all;
-            min-height: 50px;
-            font-family: 'Courier New', monospace;
+
+        .score-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 600px;
             overflow-y: auto;
-            max-height: 100px;
         }
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-        }
-        button {
+
+        .score-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: transform 0.2s;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .score-item:hover {
+            transform: translateX(5px);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .game-area {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .timer-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .timer {
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #667eea;
+            font-family: 'Courier New', monospace;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer.warning {
+            color: #f6ad55;
+        }
+
+        .timer.danger {
+            color: #f56565;
+            animation: pulse 0.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .sentence-box {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            min-height: 100px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sentence-text {
+            color: #2d3748;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        input[type="text"].correct {
+            border-color: #48bb78;
+            background-color: #f0fff4;
+        }
+
+        input[type="text"].incorrect {
+            border-color: #f56565;
+            background-color: #fff5f5;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-box {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-label {
             font-size: 0.9rem;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
-        button:hover {
+
+        .start-btn {
+            background: #48bb78;
+            color: white;
+        }
+
+        .start-btn:hover {
+            background: #38a169;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
         }
-        button:active {
-            transform: translateY(0);
+
+        .start-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
         }
-        .number, .decimal {
-            background: #f0f0f0;
-            color: #333;
-        }
-        .operator {
+
+        .reset-btn {
             background: #667eea;
             color: white;
         }
-        .scientific {
-            background: #ed8936;
-            color: white;
+
+        .reset-btn:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
         }
-        .equals {
-            background: #48bb78;
-            color: white;
-            grid-column: span 2;
+
+        .game-over {
+            background: #fff5f5;
+            border: 2px solid #f56565;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
         }
-        .clear {
-            background: #f56565;
-            color: white;
+
+        .game-over.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .game-over h2 {
+            color: #f56565;
+            margin-bottom: 15px;
+        }
+
+        .game-over p {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin: 10px 0;
+        }
+
+        .highlight-correct {
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .highlight-incorrect {
+            color: #f56565;
+            font-weight: bold;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .score-panel {
+                width: 100%;
+                position: static;
+                max-height: 200px;
+            }
+
+            .score-list {
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .score-item {
+                flex: 1;
+                min-width: 150px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <h1>Scientific Calculator</h1>
-        <div class="display" id="display">0</div>
-        <div class="buttons">
-            <!-- Row 1: Scientific functions -->
-            <button class="scientific" onclick="scientificFunc('sin')">sin</button>
-            <button class="scientific" onclick="scientificFunc('cos')">cos</button>
-            <button class="scientific" onclick="scientificFunc('tan')">tan</button>
-            <button class="scientific" onclick="scientificFunc('sqrt')">√</button>
-            <button class="scientific" onclick="scientificFunc('log')">log</button>
-            
-            <!-- Row 2: More scientific functions -->
-            <button class="scientific" onclick="scientificFunc('ln')">ln</button>
-            <button class="scientific" onclick="scientificFunc('factorial')">n!</button>
-            <button class="scientific" onclick="appendConstant('pi')">π</button>
-            <button class="scientific" onclick="appendConstant('e')">e</button>
-            <button class="scientific" onclick="scientificFunc('pow')">x^y</button>
-            
-            <!-- Row 3: Basic operations -->
-            <button class="clear" onclick="clearDisplay()">C</button>
-            <button class="operator" onclick="appendOperator('/')">÷</button>
-            <button class="operator" onclick="appendOperator('*')">×</button>
-            <button class="operator" onclick="appendOperator('-')">−</button>
-            <button class="operator" onclick="toggleNegative()">±</button>
-            
-            <!-- Row 4: Numbers -->
-            <button class="number" onclick="appendNumber('7')">7</button>
-            <button class="number" onclick="appendNumber('8')">8</button>
-            <button class="number" onclick="appendNumber('9')">9</button>
-            <button class="operator" onclick="appendOperator('+')">+</button>
-            <button class="operator" onclick="appendOperator('%')">%</button>
-            
-            <!-- Row 5: Numbers -->
-            <button class="number" onclick="appendNumber('4')">4</button>
-            <button class="number" onclick="appendNumber('5')">5</button>
-            <button class="number" onclick="appendNumber('6')">6</button>
-            <button class="decimal" onclick="appendDecimal()">.</button>
-            <button class="scientific" onclick="scientificFunc('reciprocal')">1/x</button>
-            
-            <!-- Row 6: Numbers and equals -->
-            <button class="number" onclick="appendNumber('1')">1</button>
-            <button class="number" onclick="appendNumber('2')">2</button>
-            <button class="number" onclick="appendNumber('3')">3</button>
-            <button class="equals" onclick="calculate()" style="grid-column: span 2;">=</button>
-            
-            <!-- Row 7: Zero -->
-            <button class="number" style="grid-column: span 3;" onclick="appendNumber('0')">0</button>
-            <button class="scientific" onclick="appendBracket('(')">(</button>
-            <button class="scientific" onclick="appendBracket(')')">)</button>
+    <div class="container">
+        <div class="score-panel">
+            <h2>📊 Scores</h2>
+            <div class="score-list" id="scoreList">
+                <div style="color: #718096; text-align: center; padding: 20px;">
+                    No scores yet. Start typing!
+                </div>
+            </div>
+        </div>
+
+        <div class="game-area">
+            <h1>⚡ Typing Speed Challenge</h1>
+
+            <div class="timer-section">
+                <div class="timer" id="timer">60</div>
+            </div>
+
+            <div class="sentence-box">
+                <span class="sentence-text" id="sentence">Click "START" to begin!</span>
+            </div>
+
+            <div class="input-section">
+                <input type="text" id="userInput" placeholder="Type the sentence here..." disabled>
+            </div>
+
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Words Typed</div>
+                    <div class="stat-value" id="wordCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Correct Words</div>
+                    <div class="stat-value" id="correctCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Accuracy</div>
+                    <div class="stat-value" id="accuracy">0%</div>
+                </div>
+            </div>
+
+            <div class="game-over" id="gameOverBox">
+                <h2>⏱️ Time's Up!</h2>
+                <p>Final Score: <strong id="finalScore">0</strong> WPM</p>
+                <p>Accuracy: <strong id="finalAccuracy">0%</strong></p>
+            </div>
+
+            <div class="button-group">
+                <button class="start-btn" id="startBtn" onclick="startGame()">START</button>
+                <button class="reset-btn" onclick="resetScores()">Clear Scores</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let display = document.getElementById('display');
-        let currentInput = '0';
-        let previousInput = '';
-        let operator = null;
-        let scientificOperator = null;
+        const sentences = [
+            "The quick brown fox jumps over the lazy dog every morning.",
+            "I need to buy groceries on my way home from work today.",
+            "The weather is nice and I want to go for a walk.",
+            "Can you help me with this project when you get a chance?",
+            "She enjoys reading books in the quiet library on weekends.",
+            "Let's meet up for coffee and catch up with each other.",
+            "The movie last night was really good and I loved it.",
+            "I forgot my keys at the office so I cannot get in.",
+            "Would you like to join us for dinner this Friday night?",
+            "The traffic is really bad today on my commute to work.",
+            "I just finished my homework and now I can play video games.",
+            "Can I borrow your pen please because I cannot find mine.",
+            "The restaurant has excellent food and great service too.",
+            "Let me know if you need any help with your project.",
+            "I am going to the gym to work out for an hour today.",
+            "The new store opened downtown and it looks really nice.",
+            "Do you have any plans for the weekend that are fun?",
+            "I love learning new things and discovering new hobbies.",
+            "Can we reschedule the meeting to a different time please?",
+            "The package arrived today and I am very excited about it.",
+            "I think we should go somewhere different this summer.",
+            "Please remember to bring your documents to the meeting.",
+            "The coffee shop near my house makes really good coffee.",
+            "I am tired today so I might take a nap this afternoon.",
+            "What time does the store close today in the evening?",
+            "I would like to try that new restaurant with you soon.",
+            "The rain stopped so maybe we can go outside and play.",
+            "Can you tell me the directions to the nearest station?",
+            "I finished reading the book and it was really exciting.",
+            "Let's go for a walk in the park and enjoy the weather.",
+        ];
 
-        function updateDisplay() {
-            display.innerText = currentInput;
-        }
+        let timeLeft = 60;
+        let gameActive = false;
+        let timerInterval = null;
+        let currentSentence = '';
+        let scores = JSON.parse(localStorage.getItem('typingScores')) || [];
+        let totalWordsTyped = 0;
+        let correctWords = 0;
 
-        function appendNumber(num) {
-            if (currentInput === '0') {
-                currentInput = num;
-            } else {
-                currentInput += num;
-            }
-            updateDisplay();
-        }
+        const elements = {
+            timer: document.getElementById('timer'),
+            sentence: document.getElementById('sentence'),
+            input: document.getElementById('userInput'),
+            startBtn: document.getElementById('startBtn'),
+            wordCount: document.getElementById('wordCount'),
+            correctCount: document.getElementById('correctCount'),
+            accuracy: document.getElementById('accuracy'),
+            scoreList: document.getElementById('scoreList'),
+            gameOverBox: document.getElementById('gameOverBox'),
+            finalScore: document.getElementById('finalScore'),
+            finalAccuracy: document.getElementById('finalAccuracy')
+        };
 
-        function appendOperator(op) {
-            if (operator !== null && currentInput !== '') {
-                calculate();
-            }
-            previousInput = currentInput;
-            operator = op;
-            currentInput = '';
-        }
-
-        function appendDecimal() {
-            if (!currentInput.includes('.')) {
-                currentInput += '.';
-                updateDisplay();
-            }
-        }
-
-        function appendBracket(bracket) {
-            currentInput += bracket;
-            updateDisplay();
-        }
-
-        function appendConstant(constant) {
-            if (constant === 'pi') {
-                currentInput = Math.PI.toString();
-            } else if (constant === 'e') {
-                currentInput = Math.E.toString();
-            }
-            updateDisplay();
-        }
-
-        function scientificFunc(func) {
-            const value = parseFloat(currentInput);
-            let result;
-
-            switch(func) {
-                case 'sin':
-                    result = Math.sin(toRadians(value));
-                    break;
-                case 'cos':
-                    result = Math.cos(toRadians(value));
-                    break;
-                case 'tan':
-                    result = Math.tan(toRadians(value));
-                    break;
-                case 'sqrt':
-                    result = Math.sqrt(value);
-                    break;
-                case 'log':
-                    result = Math.log10(value);
-                    break;
-                case 'ln':
-                    result = Math.log(value);
-                    break;
-                case 'factorial':
-                    result = factorial(Math.floor(value));
-                    break;
-                case 'reciprocal':
-                    result = value !== 0 ? 1 / value : 'Error';
-                    break;
-                case 'pow':
-                    scientificOperator = 'pow';
-                    previousInput = currentInput;
-                    currentInput = '';
-                    updateDisplay();
-                    return;
-                default:
-                    return;
-            }
-
-            currentInput = result.toString();
-            updateDisplay();
-        }
-
-        function toRadians(degrees) {
-            return degrees * (Math.PI / 180);
-        }
-
-        function factorial(n) {
-            if (n < 0) return 'Error';
-            if (n === 0 || n === 1) return 1;
-            let result = 1;
-            for (let i = 2; i <= n; i++) {
-                result *= i;
-            }
-            return result;
-        }
-
-        function calculate() {
-            if (scientificOperator === 'pow') {
-                const base = parseFloat(previousInput);
-                const exponent = parseFloat(currentInput);
-                currentInput = Math.pow(base, exponent).toString();
-                scientificOperator = null;
-                operator = null;
-                previousInput = '';
-                updateDisplay();
+        function displayScores() {
+            if (scores.length === 0) {
+                elements.scoreList.innerHTML = '<div style="color: #718096; text-align: center; padding: 20px;">No scores yet. Start typing!</div>';
                 return;
             }
-
-            if (operator === null || currentInput === '') return;
             
-            let result;
-            const prev = parseFloat(previousInput);
-            const current = parseFloat(currentInput);
+            elements.scoreList.innerHTML = scores
+                .map(score => `<div class="score-item">${score} WPM</div>`)
+                .join('');
+        }
 
-            switch(operator) {
-                case '+':
-                    result = prev + current;
-                    break;
-                case '-':
-                    result = prev - current;
-                    break;
-                case '*':
-                    result = prev * current;
-                    break;
-                case '/':
-                    result = current !== 0 ? prev / current : 'Error';
-                    break;
-                case '%':
-                    result = prev % current;
-                    break;
-                default:
-                    return;
+        function getRandomSentence() {
+            return sentences[Math.floor(Math.random() * sentences.length)];
+        }
+
+        function startGame() {
+            gameActive = true;
+            timeLeft = 60;
+            totalWordsTyped = 0;
+            correctWords = 0;
+            elements.startBtn.disabled = true;
+            elements.input.disabled = false;
+            elements.input.focus();
+            elements.gameOverBox.classList.remove('show');
+            elements.input.value = '';
+            elements.input.className = '';
+
+            currentSentence = getRandomSentence();
+            elements.sentence.textContent = currentSentence;
+
+            updateStats();
+            updateTimerDisplay();
+
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 100);
+        }
+
+        function updateTimer() {
+            timeLeft -= 0.1;
+            updateTimerDisplay();
+
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }
+
+        function updateTimerDisplay() {
+            const displayTime = Math.max(0, Math.ceil(timeLeft));
+            elements.timer.textContent = displayTime;
+
+            if (displayTime <= 10) {
+                elements.timer.classList.add('danger');
+                elements.timer.classList.remove('warning');
+            } else if (displayTime <= 20) {
+                elements.timer.classList.add('warning');
+                elements.timer.classList.remove('danger');
+            } else {
+                elements.timer.classList.remove('warning', 'danger');
+            }
+        }
+
+        function endGame() {
+            gameActive = false;
+            if (timerInterval) clearInterval(timerInterval);
+
+            elements.input.disabled = true;
+            elements.startBtn.disabled = false;
+
+            const wpm = Math.round(totalWordsTyped / (60 / 60));
+            scores.unshift(wpm);
+            localStorage.setItem('typingScores', JSON.stringify(scores));
+            displayScores();
+
+            const accuracy = totalWordsTyped > 0 ? Math.round((correctWords / totalWordsTyped) * 100) : 0;
+            elements.finalScore.textContent = wpm;
+            elements.finalAccuracy.textContent = accuracy + '%';
+            elements.gameOverBox.classList.add('show');
+        }
+
+        elements.input.addEventListener('input', function() {
+            if (!gameActive) return;
+
+            const userWords = this.value.trim().split(/\s+/).filter(w => w.length > 0);
+            const sentenceWords = currentSentence.split(/\s+/);
+
+            totalWordsTyped = userWords.length;
+            correctWords = 0;
+
+            for (let i = 0; i < userWords.length && i < sentenceWords.length; i++) {
+                if (userWords[i].toLowerCase() === sentenceWords[i].toLowerCase()) {
+                    correctWords++;
+                }
             }
 
-            currentInput = result.toString();
-            operator = null;
-            previousInput = '';
-            updateDisplay();
+            updateStats();
+
+            if (userWords.length > 0 && userWords.length === sentenceWords.length) {
+                if (userWords.join(' ').toLowerCase() === sentenceWords.join(' ').toLowerCase()) {
+                    elements.input.className = 'correct';
+                    setTimeout(() => {
+                        elements.input.value = '';
+                        elements.input.className = '';
+                        currentSentence = getRandomSentence();
+                        elements.sentence.textContent = currentSentence;
+                    }, 500);
+                }
+            } else if (userWords.length > sentenceWords.length) {
+                elements.input.className = 'incorrect';
+            } else {
+                elements.input.className = '';
+            }
+        });
+
+        function updateStats() {
+            elements.wordCount.textContent = totalWordsTyped;
+            elements.correctCount.textContent = correctWords;
+            const accuracy = totalWordsTyped > 0 ? Math.round((correctWords / totalWordsTyped) * 100) : 0;
+            elements.accuracy.textContent = accuracy + '%';
         }
 
-        function clearDisplay() {
-            currentInput = '0';
-            previousInput = '';
-            operator = null;
-            scientificOperator = null;
-            updateDisplay();
+        function resetScores() {
+            if (confirm('Are you sure you want to clear all scores?')) {
+                scores = [];
+                localStorage.removeItem('typingScores');
+                displayScores();
+            }
         }
 
-        function toggleNegative() {
-            currentInput = (parseFloat(currentInput) * -1).toString();
-            updateDisplay();
-        }
-
-        updateDisplay();
+        displayScores();
     </script>
 </body>
 </html>
