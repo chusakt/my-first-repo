@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My First GitHub Page</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
+        #time { color: #007bff; font-weight: bold; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>สวัสดีจาก GitHub! 🚀</h1>
+        <p>นี่คือหน้าเว็บ Dynamic แรกของฉัน</p>
+        <p>เวลาปัจจุบันคือ: <span id="time">กำลังโหลด...</span></p>
+    </div>
+
+    <script>
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').innerText = now.toLocaleTimeString();
+        }
+        setInterval(updateTime, 1000); // อัปเดตทุกๆ 1 วินาที
+        updateTime();
+    </script>
+</body>
+</html>
