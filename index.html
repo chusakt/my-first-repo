@@ -1,27 +1,191 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My First GitHub Page</title>
+    <title>Simple Calculator</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f2f5; }
-        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; }
-        #time { color: #007bff; font-weight: bold; font-size: 1.2rem; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .calculator {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 300px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-top: 0;
+        }
+        .display {
+            background: #222;
+            color: #00ff00;
+            font-size: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: right;
+            margin-bottom: 1rem;
+            word-wrap: break-word;
+            word-break: break-all;
+            min-height: 50px;
+            font-family: 'Courier New', monospace;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            padding: 15px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+        .number, .decimal {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .operator {
+            background: #667eea;
+            color: white;
+        }
+        .equals {
+            background: #48bb78;
+            color: white;
+            grid-column: span 2;
+        }
+        .clear {
+            background: #f56565;
+            color: white;
+            grid-column: span 2;
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>สวัสดีจาก GitHub! 🚀</h1>
-        <p>นี่คือหน้าเว็บ Dynamic แรกของฉัน</p>
-        <p>เวลาปัจจุบันคือ: <span id="time">กำลังโหลด...</span></p>
+    <div class="calculator">
+        <h1>Calculator</h1>
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button class="operator" onclick="appendOperator('/')">÷</button>
+            <button class="operator" onclick="appendOperator('*')">×</button>
+            
+            <button class="number" onclick="appendNumber('7')">7</button>
+            <button class="number" onclick="appendNumber('8')">8</button>
+            <button class="number" onclick="appendNumber('9')">9</button>
+            <button class="operator" onclick="appendOperator('-')">−</button>
+            
+            <button class="number" onclick="appendNumber('4')">4</button>
+            <button class="number" onclick="appendNumber('5')">5</button>
+            <button class="number" onclick="appendNumber('6')">6</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            
+            <button class="number" onclick="appendNumber('1')">1</button>
+            <button class="number" onclick="appendNumber('2')">2</button>
+            <button class="number" onclick="appendNumber('3')">3</button>
+            <button class="operator" onclick="toggleNegative()">±</button>
+            
+            <button class="number" style="grid-column: span 2;" onclick="appendNumber('0')">0</button>
+            <button class="decimal" onclick="appendDecimal()">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
     </div>
 
     <script>
-        function updateTime() {
-            const now = new Date();
-            document.getElementById('time').innerText = now.toLocaleTimeString();
+        let display = document.getElementById('display');
+        let currentInput = '0';
+        let previousInput = '';
+        let operator = null;
+
+        function updateDisplay() {
+            display.innerText = currentInput;
         }
-        setInterval(updateTime, 1000); // อัปเดตทุกๆ 1 วินาที
-        updateTime();
+
+        function appendNumber(num) {
+            if (currentInput === '0') {
+                currentInput = num;
+            } else {
+                currentInput += num;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(op) {
+            if (operator !== null && currentInput !== '') {
+                calculate();
+            }
+            previousInput = currentInput;
+            operator = op;
+            currentInput = '';
+        }
+
+        function appendDecimal() {
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                updateDisplay();
+            }
+        }
+
+        function calculate() {
+            if (operator === null || currentInput === '') return;
+            
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+
+            switch(operator) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = current !== 0 ? prev / current : 'Error';
+                    break;
+                default:
+                    return;
+            }
+
+            currentInput = result.toString();
+            operator = null;
+            previousInput = '';
+            updateDisplay();
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            previousInput = '';
+            operator = null;
+            updateDisplay();
+        }
+
+        function toggleNegative() {
+            currentInput = (parseFloat(currentInput) * -1).toString();
+            updateDisplay();
+        }
+
+        updateDisplay();
     </script>
 </body>
 </html>
