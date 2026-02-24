@@ -317,9 +317,150 @@
             font-weight: bold;
             color: #667eea;
         }
+
+        /* Dark Mode Styles */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7fafc;
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --border-color: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-gradient-start: #4a5568;
+            --bg-gradient-end: #2d3748;
+            --text-primary: #e2e8f0;
+            --text-secondary: #a0aec0;
+            --border-color: #4a5568;
+            --shadow: rgba(0, 0, 0, 0.6);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .score-panel {
+            background: var(--bg-primary);
+            border-color: var(--border-color);
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .score-panel h2 {
+            color: var(--text-primary);
+            border-bottom-color: var(--bg-gradient-start);
+        }
+
+        .game-area {
+            background: var(--bg-primary);
+            box-shadow: 0 10px 30px var(--shadow);
+            transition: background-color 0.3s ease;
+        }
+
+        h1 {
+            color: var(--text-primary);
+        }
+
+        .sentence-box {
+            background: var(--bg-secondary);
+            border-color: var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .sentence-text {
+            color: var(--text-primary);
+        }
+
+        input[type="text"] {
+            background: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--bg-gradient-start) !important;
+        }
+
+        .stat-box {
+            background: var(--bg-secondary);
+            transition: background-color 0.3s ease;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            color: var(--bg-gradient-start);
+        }
+
+        .game-over {
+            background: #fff5f5;
+            border-color: #f56565;
+        }
+
+        body.dark-mode .game-over {
+            background: #742a2a;
+            border-color: #f56565;
+        }
+
+        body.dark-mode .game-over h2 {
+            color: #fc8181;
+        }
+
+        body.dark-mode .game-over p {
+            color: #e2e8f0;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: #2d3748;
+            border-color: #a0aec0;
+            color: #e2e8f0;
+        }
+
+        .version-info {
+            color: var(--text-secondary);
+            border-top-color: var(--border-color);
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">🌙</button>
     <div class="container">
         <div class="score-panel">
             <h2>📊 Scores</h2>
@@ -372,7 +513,7 @@
             </div>
 
             <div class="version-info">
-                Typing Speed Challenge - <span id="versionDisplay">v0.1</span>
+                Typing Speed Challenge - <span id="versionDisplay">v0.2</span>
             </div>
         </div>
     </div>
@@ -555,6 +696,31 @@
         }
 
         displayScores();
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const bodyElement = document.body;
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            bodyElement.classList.add('dark-mode');
+            themeToggle.textContent = '☀️';
+        }
+
+        // Toggle theme on button click
+        themeToggle.addEventListener('click', function() {
+            bodyElement.classList.toggle('dark-mode');
+            
+            // Update button icon
+            if (bodyElement.classList.contains('dark-mode')) {
+                themeToggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeToggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        });
     </script>
 </body>
 </html>
