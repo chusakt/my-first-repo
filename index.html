@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple Calculator</title>
+    <title>Scientific Calculator</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
+            padding: 20px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
         .calculator {
@@ -17,7 +18,7 @@
             padding: 2rem;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 300px;
+            width: 500px;
         }
         h1 {
             text-align: center;
@@ -36,15 +37,17 @@
             word-break: break-all;
             min-height: 50px;
             font-family: 'Courier New', monospace;
+            overflow-y: auto;
+            max-height: 100px;
         }
         .buttons {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
         }
         button {
-            padding: 15px;
-            font-size: 1.2rem;
+            padding: 12px;
+            font-size: 0.9rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -66,6 +69,10 @@
             background: #667eea;
             color: white;
         }
+        .scientific {
+            background: #ed8936;
+            color: white;
+        }
         .equals {
             background: #48bb78;
             color: white;
@@ -74,37 +81,59 @@
         .clear {
             background: #f56565;
             color: white;
-            grid-column: span 2;
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <h1>Calculator</h1>
+        <h1>Scientific Calculator</h1>
         <div class="display" id="display">0</div>
         <div class="buttons">
+            <!-- Row 1: Scientific functions -->
+            <button class="scientific" onclick="scientificFunc('sin')">sin</button>
+            <button class="scientific" onclick="scientificFunc('cos')">cos</button>
+            <button class="scientific" onclick="scientificFunc('tan')">tan</button>
+            <button class="scientific" onclick="scientificFunc('sqrt')">√</button>
+            <button class="scientific" onclick="scientificFunc('log')">log</button>
+            
+            <!-- Row 2: More scientific functions -->
+            <button class="scientific" onclick="scientificFunc('ln')">ln</button>
+            <button class="scientific" onclick="scientificFunc('factorial')">n!</button>
+            <button class="scientific" onclick="appendConstant('pi')">π</button>
+            <button class="scientific" onclick="appendConstant('e')">e</button>
+            <button class="scientific" onclick="scientificFunc('pow')">x^y</button>
+            
+            <!-- Row 3: Basic operations -->
             <button class="clear" onclick="clearDisplay()">C</button>
             <button class="operator" onclick="appendOperator('/')">÷</button>
             <button class="operator" onclick="appendOperator('*')">×</button>
+            <button class="operator" onclick="appendOperator('-')">−</button>
+            <button class="operator" onclick="toggleNegative()">±</button>
             
+            <!-- Row 4: Numbers -->
             <button class="number" onclick="appendNumber('7')">7</button>
             <button class="number" onclick="appendNumber('8')">8</button>
             <button class="number" onclick="appendNumber('9')">9</button>
-            <button class="operator" onclick="appendOperator('-')">−</button>
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            <button class="operator" onclick="appendOperator('%')">%</button>
             
+            <!-- Row 5: Numbers -->
             <button class="number" onclick="appendNumber('4')">4</button>
             <button class="number" onclick="appendNumber('5')">5</button>
             <button class="number" onclick="appendNumber('6')">6</button>
-            <button class="operator" onclick="appendOperator('+')">+</button>
+            <button class="decimal" onclick="appendDecimal()">.</button>
+            <button class="scientific" onclick="scientificFunc('reciprocal')">1/x</button>
             
+            <!-- Row 6: Numbers and equals -->
             <button class="number" onclick="appendNumber('1')">1</button>
             <button class="number" onclick="appendNumber('2')">2</button>
             <button class="number" onclick="appendNumber('3')">3</button>
-            <button class="operator" onclick="toggleNegative()">±</button>
+            <button class="equals" onclick="calculate()" style="grid-column: span 2;">=</button>
             
-            <button class="number" style="grid-column: span 2;" onclick="appendNumber('0')">0</button>
-            <button class="decimal" onclick="appendDecimal()">.</button>
-            <button class="equals" onclick="calculate()">=</button>
+            <!-- Row 7: Zero -->
+            <button class="number" style="grid-column: span 3;" onclick="appendNumber('0')">0</button>
+            <button class="scientific" onclick="appendBracket('(')">(</button>
+            <button class="scientific" onclick="appendBracket(')')">)</button>
         </div>
     </div>
 
@@ -113,6 +142,7 @@
         let currentInput = '0';
         let previousInput = '';
         let operator = null;
+        let scientificOperator = null;
 
         function updateDisplay() {
             display.innerText = currentInput;
@@ -143,7 +173,89 @@
             }
         }
 
+        function appendBracket(bracket) {
+            currentInput += bracket;
+            updateDisplay();
+        }
+
+        function appendConstant(constant) {
+            if (constant === 'pi') {
+                currentInput = Math.PI.toString();
+            } else if (constant === 'e') {
+                currentInput = Math.E.toString();
+            }
+            updateDisplay();
+        }
+
+        function scientificFunc(func) {
+            const value = parseFloat(currentInput);
+            let result;
+
+            switch(func) {
+                case 'sin':
+                    result = Math.sin(toRadians(value));
+                    break;
+                case 'cos':
+                    result = Math.cos(toRadians(value));
+                    break;
+                case 'tan':
+                    result = Math.tan(toRadians(value));
+                    break;
+                case 'sqrt':
+                    result = Math.sqrt(value);
+                    break;
+                case 'log':
+                    result = Math.log10(value);
+                    break;
+                case 'ln':
+                    result = Math.log(value);
+                    break;
+                case 'factorial':
+                    result = factorial(Math.floor(value));
+                    break;
+                case 'reciprocal':
+                    result = value !== 0 ? 1 / value : 'Error';
+                    break;
+                case 'pow':
+                    scientificOperator = 'pow';
+                    previousInput = currentInput;
+                    currentInput = '';
+                    updateDisplay();
+                    return;
+                default:
+                    return;
+            }
+
+            currentInput = result.toString();
+            updateDisplay();
+        }
+
+        function toRadians(degrees) {
+            return degrees * (Math.PI / 180);
+        }
+
+        function factorial(n) {
+            if (n < 0) return 'Error';
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) {
+                result *= i;
+            }
+            return result;
+        }
+
         function calculate() {
+            if (scientificOperator === 'pow') {
+                const base = parseFloat(previousInput);
+                const exponent = parseFloat(currentInput);
+                currentInput = Math.pow(base, exponent).toString();
+                scientificOperator = null;
+                operator = null;
+                previousInput = '';
+                updateDisplay();
+                return;
+            }
+
             if (operator === null || currentInput === '') return;
             
             let result;
@@ -163,6 +275,9 @@
                 case '/':
                     result = current !== 0 ? prev / current : 'Error';
                     break;
+                case '%':
+                    result = prev % current;
+                    break;
                 default:
                     return;
             }
@@ -177,6 +292,7 @@
             currentInput = '0';
             previousInput = '';
             operator = null;
+            scientificOperator = null;
             updateDisplay();
         }
 
