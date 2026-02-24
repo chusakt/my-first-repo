@@ -303,6 +303,20 @@
                 min-width: 150px;
             }
         }
+
+        .version-info {
+            text-align: center;
+            color: #a0aec0;
+            font-size: 0.85rem;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .version-info span {
+            font-weight: bold;
+            color: #667eea;
+        }
     </style>
 </head>
 <body>
@@ -355,6 +369,10 @@
             <div class="button-group">
                 <button class="start-btn" id="startBtn" onclick="startGame()">START</button>
                 <button class="reset-btn" onclick="resetScores()">Clear Scores</button>
+            </div>
+
+            <div class="version-info">
+                Typing Speed Challenge - <span id="versionDisplay">v0.1</span>
             </div>
         </div>
     </div>
