@@ -95,7 +95,7 @@ REACT_APP_ENV=production
 1. **GitHub Pages** (Recommended for v0.1)
    - Free hosting
    - Auto-deploy on push
-   - URL: `username.github.io/my-first-repo`
+   - URL: `username.github.io/typegame`
 
 2. **Netlify**
    - Free tier

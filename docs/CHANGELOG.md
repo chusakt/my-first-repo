@@ -246,12 +246,12 @@ Week 4: Testing & Documentation
 
 ## Contributors
 - **Creator**: GitHub user chusakt
-- **Project**: my-first-repo (Typing Speed Challenge)
+- **Project**: typegame (Typing Speed Challenge)
 
 ---
 
 ## Links
-- Repository: https://github.com/chusakt/my-first-repo
+- Repository: https://github.com/chusakt/typegame
 - Issues: Track bugs and feature requests
 - Documentation:
   - [README](README.md)
