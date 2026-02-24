@@ -1,0 +1,62 @@
+# Git Ignore File for Typing Speed Challenge
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.classpath
+.c9/
+*.sublime-project
+*.sublime-workspace
+*.pyc
+
+# Node.js (for future use if migrating to Node setup)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+.npm
+.yarn/cache
+
+# Build outputs (for future use)
+dist/
+build/
+*.min.js
+*.min.css
+
+# Testing (for future use)
+coverage/
+.nyc_output/
+test-results/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS
+Thumbs.db
+.DS_Store
+*.log
+
+# Temporary files
+*.tmp
+*.bak
+*.backup
+*~
+
+# Local development
+local.html
+test-*.html
+scratch/
+
+# Browser cache
+.service-worker
+
+# Generated files
+*.map
+*.bundle.js
